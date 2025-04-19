@@ -63,6 +63,7 @@ public class WenShuMcpServer {
             syncServer.addTool(executeMysqlQuery());
             syncServer.addPrompt(selectTablePrompt());
             syncServer.addPrompt(text2sqlPrompt());
+            syncServer.addPrompt(dataAnalysisPrompt());
 
             // 发送日志通知
             syncServer.loggingNotification(McpSchema.LoggingMessageNotification.builder()
@@ -277,6 +278,41 @@ public class WenShuMcpServer {
 
                     messages.add(userMessage);
                     return new McpSchema.GetPromptResult("Text2SQL提示词模板", messages);
+                });
+    }
+
+    /**
+     * 添加数据分析提示到服务器
+     */
+    private McpServerFeatures.SyncPromptSpecification dataAnalysisPrompt() {
+        String selectTablePrompt = """
+                ### 指令: 基于查询到的相关数据和资料，进行详细的数据分析。
+                ### SQL查询结果：{SQLResult}
+                ### 用户输入: {userInput}
+                ### 输出要求: 输出数据分析报告，要求：详细、专业、严谨。
+                """;
+        // 创建提示规范，包含提示定义和处理逻辑
+        return new McpServerFeatures.SyncPromptSpecification(
+                // 定义提示的基本信息和参数
+                new McpSchema.Prompt("dataAnalysisPrompt", "数据分析报告提示词模板",
+                        new ArrayList<>(
+                                List.of(
+                                        new McpSchema.PromptArgument("SQLResult", "数据库查询结果", true)
+                                ))),
+                (exchange, request) -> {
+                    // 处理提示请求
+                    List<McpSchema.PromptMessage> messages = new ArrayList<>();
+                    String SQLResult = (String) request.arguments().get("SQLResult");
+
+                    String finalPrompt = selectTablePrompt.replace("{SQLResult}", SQLResult);
+
+                    // 创建对话消息序列
+                    McpSchema.PromptMessage userMessage = new McpSchema.PromptMessage(
+                            McpSchema.Role.USER,
+                            new McpSchema.TextContent(finalPrompt));
+
+                    messages.add(userMessage);
+                    return new McpSchema.GetPromptResult("数据分析报告提示词模板", messages);
                 });
     }
 

@@ -31,7 +31,7 @@
 </dependency>
 ```
 
-添加数据库适配器（参考我的另外一个项目：https://github.com/daydayup-zyn/db-connector）
+添加数据库适配器，参考我的另外一个项目：https://github.com/daydayup-zyn/db-connector
 ```xml
 <dependency>
     <groupId>cn.daydayup.dev</groupId>
