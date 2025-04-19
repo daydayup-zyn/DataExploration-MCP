@@ -1,8 +1,8 @@
 package cn.daydayup.dev.mcpserver.server;
 
 import com.alibaba.fastjson2.JSON;
-import com.casicyber.connection.core.adapter.DatabaseAdapter;
-import com.casicyber.connection.core.database.AbstractJdbcDataSource;
+import cn.daydayup.dev.connection.core.adapter.DatabaseAdapter;
+import cn.daydayup.dev.connection.core.database.AbstractJdbcDataSource;
 import io.modelcontextprotocol.server.McpServer;
 import io.modelcontextprotocol.server.McpServerFeatures;
 import io.modelcontextprotocol.server.McpSyncServer;
@@ -11,10 +11,12 @@ import io.modelcontextprotocol.spec.McpSchema;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -35,7 +37,7 @@ import java.util.Map;
 public class WenShuMcpServer {
 
     private final static String dbConfig = """
-            {"username":"root","password":"123456","type":"mysql","host":"10.8.10.182","port":"33068","schema":"xjdlyc","driver-class-name":"com.mysql.jdbc.Driver","version":"","jdbcUrl":"jdbc:mysql://10.8.10.182:33068/xjdlyc?characterEncoding=utf-8&serverTimezone=UTC&useSSL=false"}
+            {"username":"root","password":"123456","type":"mysql","host":"10.8.10.182","port":"33068","schema":"xjdlyc","driver-class-name":"com.mysql.jdbc.Driver","jdbcUrl":"jdbc:mysql://10.8.10.182:33068/xjdlyc?characterEncoding=utf-8&serverTimezone=UTC&useSSL=false"}
             """;
 
     @Resource
@@ -103,10 +105,10 @@ public class WenShuMcpServer {
                 (exchange, arguments) -> {
                     List<McpSchema.Content> result = new ArrayList<>();
 
-                    String sql = "SHOW TABLES;";
                     try {
-                        String tableList = execute_mysql_query(sql);
-                        result.add(new McpSchema.TextContent("所有的表: " + tableList));
+                        AbstractJdbcDataSource abstractJdbcDataSource = buildAbstractDataSource();
+                        Pair<List<String>, List<List<String>>> allTableInfo = abstractJdbcDataSource.getAllTableInfo();
+                        result.add(new McpSchema.TextContent("所有的表: " + JSON.toJSONString(allTableInfo)));
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("所有的表: " + e.getMessage()));
@@ -146,10 +148,10 @@ public class WenShuMcpServer {
                 (exchange, arguments) -> {
                     List<McpSchema.Content> result = new ArrayList<>();
                     String tableName = (String)arguments.get("tableName");
-                    String sql = "DESCRIBE "+tableName+";";
                     try {
-                        String tableList = execute_mysql_query(sql);
-                        result.add(new McpSchema.TextContent("表结构: " + tableList));
+                        AbstractJdbcDataSource abstractJdbcDataSource = buildAbstractDataSource();
+                        Pair<List<String>, List<List<String>>> columnInfo = abstractJdbcDataSource.getColumnInfo(tableName);
+                        result.add(new McpSchema.TextContent("表结构: " + JSON.toJSONString(columnInfo)));
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("表结构: " + e.getMessage()));
@@ -191,8 +193,9 @@ public class WenShuMcpServer {
                     List<McpSchema.Content> result = new ArrayList<>();
                     String sqlQuery = (String)arguments.get("sqlQuery");
                     try {
-                        String tableList = execute_mysql_query(sqlQuery);
-                        result.add(new McpSchema.TextContent("查询结果: " + tableList));
+                        AbstractJdbcDataSource abstractJdbcDataSource = buildAbstractDataSource();
+                        Pair<List<String>, List<List<String>>> queryResult = abstractJdbcDataSource.query(sqlQuery);
+                        result.add(new McpSchema.TextContent("查询结果: " + JSON.toJSONString(queryResult)));
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("查询结果: " + e.getMessage()));

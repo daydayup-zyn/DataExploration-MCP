@@ -1,6 +1,6 @@
 ## 基于Java开发的智能数据分析大模型MCP服务器
 
-下面，我将以Java语言开发一个简单的数据库查询MCP服务器，并通过Cherry Studio进行测试。
+下面是使用Java语言开发的一个简单的数据库查询MCP服务器，并通过Cherry Studio进行测试。
 
 ## 安装依赖
 
@@ -31,6 +31,15 @@
 </dependency>
 ```
 
+添加数据库适配器（参考我的另外一个项目：https://github.com/daydayup-zyn/db-connector）
+```xml
+<dependency>
+    <groupId>cn.daydayup.dev</groupId>
+    <artifactId>connector-core</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+
 ## 服务端对象
 
 服务器同时支持同步和异步API，这里我们选择创建同步服务器。
@@ -52,6 +61,8 @@ try {
     syncServer.addTool(listTables());
     syncServer.addTool(getTableSchema());
     syncServer.addTool(executeMysqlQuery());
+    syncServer.addPrompt(selectTablePrompt());
+    syncServer.addPrompt(text2sqlPrompt());
 
     // 发送日志通知
     syncServer.loggingNotification(McpSchema.LoggingMessageNotification.builder()
