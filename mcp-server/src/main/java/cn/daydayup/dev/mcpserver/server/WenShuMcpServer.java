@@ -1,5 +1,7 @@
 package cn.daydayup.dev.mcpserver.server;
 
+import cn.daydayup.dev.mcpserver.config.Constants;
+import cn.daydayup.dev.mcpserver.web.WebSearch;
 import com.alibaba.fastjson2.JSON;
 import cn.daydayup.dev.connection.core.adapter.DatabaseAdapter;
 import cn.daydayup.dev.connection.core.database.AbstractJdbcDataSource;
@@ -36,12 +38,11 @@ import java.util.Map;
 @Service
 public class WenShuMcpServer {
 
-    private final static String dbConfig = """
-            {"username":"root","password":"123456","type":"mysql","host":"10.8.10.182","port":"33068","schema":"xjdlyc","driver-class-name":"com.mysql.jdbc.Driver","jdbcUrl":"jdbc:mysql://10.8.10.182:33068/xjdlyc?characterEncoding=utf-8&serverTimezone=UTC&useSSL=false"}
-            """;
-
     @Resource
     private WebMvcSseServerTransportProvider transportProvider;
+
+    @Resource
+    private WebSearch webSearch;
 
     @PostConstruct
     public void start() {
@@ -58,6 +59,7 @@ public class WenShuMcpServer {
 
         try {
             // 添加工具、资源和提示
+            syncServer.addTool(webSearch());
             syncServer.addTool(listTables());
             syncServer.addTool(getTableSchema());
             syncServer.addTool(executeMysqlQuery());
@@ -80,8 +82,45 @@ public class WenShuMcpServer {
 
     private AbstractJdbcDataSource buildAbstractDataSource(){
         DatabaseAdapter adapter = DatabaseAdapter.getAdapter();
-        adapter.setConfig(dbConfig);
+        adapter.setConfig(Constants.DB_CONFIG);
         return  (AbstractJdbcDataSource) adapter.getDataSource();
+    }
+
+    /**
+     * 网络搜索。
+     * @return McpServerFeatures.SyncToolSpecification
+     */
+    private McpServerFeatures.SyncToolSpecification webSearch(){
+        String desc = """
+                使用谷歌搜索引擎搜索关键内容。。
+                """;
+        String schema = """
+                {
+                  "type" : "object",
+                  "id" : "urn:jsonschema:Operation",
+                  "properties" : {
+                    "question" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+                """;
+        return new McpServerFeatures.SyncToolSpecification(
+                new McpSchema.Tool("webSearch", desc, schema),
+                (exchange, arguments) -> {
+                    List<McpSchema.Content> result = new ArrayList<>();
+
+                    try {
+                        String question = (String) arguments.get("question");
+                        String searchResult = webSearch.search(question);
+                        result.add(new McpSchema.TextContent("网络搜索内容: " + searchResult));
+                    }catch (Exception e){
+                        // 处理计算过程中的异常
+                        result.add(new McpSchema.TextContent("网络搜索内容: " + e.getMessage()));
+                    }
+                    return new McpSchema.CallToolResult(result, false);
+                }
+        );
     }
 
     /**
