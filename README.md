@@ -1,6 +1,6 @@
 ## 基于Java开发的智能数据分析大模型MCP服务器
 
-下面是使用Java语言开发的一个简单的数据库查询MCP服务器，并通过Cherry Studio进行测试。
+下面是使用Java语言开发的一个简单的数据库查询MCP服务器（适配MySQL、Oracle、PG数据库），并通过Cherry Studio进行测试。
 
 ## 安装依赖
 

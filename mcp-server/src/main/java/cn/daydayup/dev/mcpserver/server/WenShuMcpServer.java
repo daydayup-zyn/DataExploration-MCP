@@ -82,7 +82,7 @@ public class WenShuMcpServer {
 
     private AbstractJdbcDataSource buildAbstractDataSource(){
         DatabaseAdapter adapter = DatabaseAdapter.getAdapter();
-        adapter.setConfig(Constants.DB_CONFIG);
+        adapter.setConfig(Constants.MYSQL_CONFIG);
         return  (AbstractJdbcDataSource) adapter.getDataSource();
     }
 
