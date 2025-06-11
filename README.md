@@ -12,6 +12,7 @@
 <dependency>
     <groupId>io.modelcontextprotocol.sdk</groupId>
     <artifactId>mcp</artifactId>
+    <version>0.8.1</version>
 </dependency>
 ```
 

@@ -114,11 +114,12 @@ public class WenShuMcpServer {
                         String question = (String) arguments.get("question");
                         String searchResult = webSearch.search(question);
                         result.add(new McpSchema.TextContent("网络搜索内容: " + searchResult));
+                        return new McpSchema.CallToolResult(result, false);
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("网络搜索内容: " + e.getMessage()));
+                        return new McpSchema.CallToolResult(result, true);
                     }
-                    return new McpSchema.CallToolResult(result, false);
                 }
         );
     }
@@ -149,11 +150,12 @@ public class WenShuMcpServer {
                         AbstractJdbcDataSource abstractJdbcDataSource = buildAbstractDataSource();
                         Pair<List<String>, List<List<String>>> allTableInfo = abstractJdbcDataSource.getAllTableInfo();
                         result.add(new McpSchema.TextContent("所有的表: " + JSON.toJSONString(allTableInfo)));
+                        return new McpSchema.CallToolResult(result, false);
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("所有的表: " + e.getMessage()));
+                        return new McpSchema.CallToolResult(result, true);
                     }
-                    return new McpSchema.CallToolResult(result, false);
                 }
         );
     }
@@ -192,11 +194,12 @@ public class WenShuMcpServer {
                         AbstractJdbcDataSource abstractJdbcDataSource = buildAbstractDataSource();
                         Pair<List<String>, List<List<String>>> columnInfo = abstractJdbcDataSource.getColumnInfo(tableName);
                         result.add(new McpSchema.TextContent("表结构: " + JSON.toJSONString(columnInfo)));
+                        return new McpSchema.CallToolResult(result, false);
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("表结构: " + e.getMessage()));
+                        return new McpSchema.CallToolResult(result, true);
                     }
-                    return new McpSchema.CallToolResult(result, false);
                 }
         );
     }
@@ -236,11 +239,12 @@ public class WenShuMcpServer {
                         AbstractJdbcDataSource abstractJdbcDataSource = buildAbstractDataSource();
                         Pair<List<String>, List<List<String>>> queryResult = abstractJdbcDataSource.query(sqlQuery);
                         result.add(new McpSchema.TextContent("查询结果: " + JSON.toJSONString(queryResult)));
+                        return new McpSchema.CallToolResult(result, false);
                     }catch (Exception e){
                         // 处理计算过程中的异常
                         result.add(new McpSchema.TextContent("查询结果: " + e.getMessage()));
+                        return new McpSchema.CallToolResult(result, true);
                     }
-                    return new McpSchema.CallToolResult(result, false);
                 }
         );
     }
