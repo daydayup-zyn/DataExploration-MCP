@@ -22,9 +22,11 @@
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <langgraph4j.version>1.6.0-rc1</langgraph4j.version>
     </properties>
 
     <modules>
         <module>mcp-server</module>
+        <module>mcp-server-plus</module>
     </modules>
 </project>

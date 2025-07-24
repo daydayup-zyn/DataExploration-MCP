@@ -92,7 +92,7 @@ public class WenShuMcpServer {
      */
     private McpServerFeatures.SyncToolSpecification webSearch(){
         String desc = """
-                使用谷歌搜索引擎搜索关键内容。。
+                使用谷歌搜索引擎搜索关键内容。
                 """;
         String schema = """
                 {

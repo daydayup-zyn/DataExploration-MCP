@@ -1,4 +1,4 @@
-package cn.daydayup.dev.mcpserver.config;
+package cn.daydayup.dev.mcpserverplus.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.modelcontextprotocol.server.transport.WebMvcSseServerTransportProvider;
