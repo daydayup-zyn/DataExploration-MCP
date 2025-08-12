@@ -2,3 +2,8 @@ llm:
   dashscope:
     api-key: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxx
     chat-model: qwen-plus-latest
+
+mcp:
+  security:
+    jwt-secret: "mySuperSecretKeyForMCPServerWhichIsDefinitelyLongEnoughToMeetTheRequirementsOfHMACSHAAlgorithms2025"
+    jwt-expiration-ms: 86400000
