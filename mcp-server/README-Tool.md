@@ -346,6 +346,6 @@ private McpServerFeatures.SyncPromptSpecification text2sqlPrompt() {
 
 ![在这里插入图片描述](../assets/image-20250416172509-czaf53e.png)
 
-当询问`2024年上半年阿勒泰各月的售电量是多少`​时，大模型会依次调用`listTables`​、`getTableShcema`​、`execute_query_sql`​工具，查询数据库中的具体数据。
+当询问`2024年上半年xxx各月的xxx是多少`​时，大模型会依次调用`listTables`​、`getTableShcema`​、`execute_query_sql`​工具，查询数据库中的具体数据。
 
 ![在这里插入图片描述](../assets/image-20250416172739-05efbai.png)
